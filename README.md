@@ -38,3 +38,6 @@ Assorted server-side only QOL mods for Minecraft Fabric API
 
 3. **[Teleport Commands](https://modrinth.com/mod/teleport-commands)**
    A lightweight Fabric and Neoforge server-side mod that adds various teleportation related commands
+
+4. [**Starter Kit**](https://modrinth.com/mod/starter-kit)
+   Give all new players joining the world configurable starter gear, items and/or potion effects. It can overwrite the initial inventory, or add the items after.
