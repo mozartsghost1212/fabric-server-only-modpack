@@ -41,3 +41,6 @@ Assorted server-side only QOL mods for Minecraft Fabric API
 
 4. [**Starter Kit**](https://modrinth.com/mod/starter-kit)
    Give all new players joining the world configurable starter gear, items and/or potion effects. It can overwrite the initial inventory, or add the items after.
+
+5. **[Inventory Sorting](https://modrinth.com/mod/inventory-sorting)**
+   Inventory Sorter is a lightweight mod that keeps your inventory clean with minimal effort.  It’s used by millions of players across Modrinth and CurseForge.
