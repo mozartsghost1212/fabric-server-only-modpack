@@ -12,6 +12,8 @@ public class CustomDayNightCommand {
                 .executes(ctx -> reload(ctx.getSource())))
             .then(CommandManager.literal("status")
                 .executes(ctx -> status(ctx.getSource())))
+            .then(CommandManager.literal("togglePhaseLogging")
+                .executes(ctx -> togglePhaseLogging(ctx.getSource())))
         );
     }
 
@@ -23,11 +25,19 @@ public class CustomDayNightCommand {
 
     private static int status(ServerCommandSource source) {
         String msg = String.format(
-            "[CustomDayNightMod] dayMultiplier=%.2f, nightMultiplier=%.2f, absoluteDayLength=%d, absoluteNightLength=%d",
+            "[CustomDayNightMod] dayMultiplier=%.2f, nightMultiplier=%.2f, absoluteDayLength=%d, absoluteNightLength=%d, logPhaseChanges=%b",
             ModConfig.dayMultiplier, ModConfig.nightMultiplier,
-            ModConfig.absoluteDayLength, ModConfig.absoluteNightLength
+            ModConfig.absoluteDayLength, ModConfig.absoluteNightLength,
+            ModConfig.logPhaseChanges
         );
         source.sendFeedback(() -> Text.of(msg), false);
+        return 1;
+    }
+
+    private static int togglePhaseLogging(ServerCommandSource source) {
+        ModConfig.logPhaseChanges = !ModConfig.logPhaseChanges;
+        String msg = "[CustomDayNightMod] logPhaseChanges is now set to " + ModConfig.logPhaseChanges;
+        source.getServer().getPlayerManager().broadcast(Text.of(msg), false);
         return 1;
     }
 }
