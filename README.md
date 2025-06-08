@@ -44,3 +44,7 @@ Assorted server-side only QOL mods for Minecraft Fabric API
 
 5. **[Inventory Sorting](https://modrinth.com/mod/inventory-sorting)**
    Inventory Sorter is a lightweight mod that keeps your inventory clean with minimal effort.  It’s used by millions of players across Modrinth and CurseForge.
+
+6. **[Custom Day/Night Mod](https://github.com/mozartsghost1212/fabric-server-only-modpack/tree/main/vscode/mg-custom-day-night-mod)**
+   A server-side only Fabric mod for Minecraft 1.21.5 that allows you to configure the length of day and night.
+
