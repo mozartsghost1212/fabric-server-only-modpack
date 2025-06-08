@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 public class CustomDayNightCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("customdaynight")
+            .requires(source -> source.hasPermissionLevel(4))  // Restrict to Full operators
             .then(CommandManager.literal("reload")
                 .executes(ctx -> reload(ctx.getSource())))
             .then(CommandManager.literal("status")
