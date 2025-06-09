@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "shopkeepermod",
+  "version": "1.0.0",
+  "name": "Shopkeeper Mod",
+  "description": "Allows operators to spawn protected shops with persistent shopkeepers and custom trades.",
+  "authors": [
+    "mozartsghost1212"
+  ],
+  "contact": {
+    "homepage": "https://github.com/mozartsghost1212"
+  },
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.github.mozartsghost1212.shopkeepermod.ShopkeeperMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.1",
+    "fabric-api": ">=0.124.0+1.21.5",
+    "minecraft": "1.21.5"
+  }
+}
