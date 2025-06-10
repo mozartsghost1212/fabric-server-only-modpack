@@ -1,12 +1,10 @@
 package com.github.mozartsghost1212.shopkeepermod;
 
-
-
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 public class ShopkeeperMod implements ModInitializer {
-    
+
     @Override
     public void onInitialize() {
         ShopkeeperManager.loadShops();

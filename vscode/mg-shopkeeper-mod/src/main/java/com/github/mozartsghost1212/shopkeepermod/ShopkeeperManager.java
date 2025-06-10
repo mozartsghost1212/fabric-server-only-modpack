@@ -1,7 +1,5 @@
 package com.github.mozartsghost1212.shopkeepermod;
 
-
-
 import com.google.gson.*;
 import net.minecraft.util.math.BlockPos;
 
@@ -30,7 +28,8 @@ public class ShopkeeperManager {
         shops.clear();
         try {
             Path path = Paths.get("config/shopkeepers.json");
-            if (!Files.exists(path)) return;
+            if (!Files.exists(path))
+                return;
             String json = Files.readString(path);
             JsonArray array = JsonParser.parseString(json).getAsJsonArray();
             for (JsonElement elem : array) {
@@ -67,7 +66,8 @@ public class ShopkeeperManager {
         }
         try {
             Files.createDirectories(Paths.get("config"));
-            Files.writeString(Paths.get("config/shopkeepers.json"), array.toString(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(Paths.get("config/shopkeepers.json"), array.toString(), StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }

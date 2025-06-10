@@ -1,7 +1,5 @@
 package com.github.mozartsghost1212.shopkeepermod;
 
-
-
 public class TradeDefinition {
     public String costItem;
     public int costCount;

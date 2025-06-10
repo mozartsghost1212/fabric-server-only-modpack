@@ -1,7 +1,5 @@
 package com.github.mozartsghost1212.shopkeepermod;
 
-
-
 import com.google.gson.*;
 import java.io.IOException;
 import java.nio.file.*;
@@ -19,7 +17,8 @@ public class ShopTypeManager {
         shopTypes.clear();
         Path path = Paths.get("config/shop_types.json");
         try {
-            if (!Files.exists(path)) return;
+            if (!Files.exists(path))
+                return;
             String json = Files.readString(path);
             JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
             for (String shopType : obj.keySet()) {

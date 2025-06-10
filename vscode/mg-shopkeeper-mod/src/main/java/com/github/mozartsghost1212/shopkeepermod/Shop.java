@@ -1,7 +1,5 @@
 package com.github.mozartsghost1212.shopkeepermod;
 
-
-
 import net.minecraft.util.math.BlockPos;
 
 import java.util.UUID;
