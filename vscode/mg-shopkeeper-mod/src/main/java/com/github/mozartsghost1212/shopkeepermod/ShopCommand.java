@@ -107,19 +107,18 @@ public class ShopCommand {
     }
 
     public static int removeShopkeeper(ServerCommandSource source, UUID uuid) {
-        ShopkeeperManager.removeShop(uuid);
-        ShopkeeperManager.removeShopById(shop_id);
-        source.sendFeedback(Text.of("Removed shopkeeper with ID: " + shop_id), false);
+        ShopkeeperManager.removeShopById(uuid.toString());
+        Supplier<Text> feedback = () -> Text.of("Removed shopkeeper with UUID: " + uuid);
+        source.sendFeedback(feedback, true);
         return 1;
     }
-}
 
     public static int reloadShopTypes(ServerCommandSource source) {
         ShopTypeManager.loadShopTypes();
-        source.sendFeedback(Text.of("Shop types reloaded."), false);
+        Supplier<Text> feedback = () -> Text.of("Shop types reloaded.");
+        source.sendFeedback(feedback, false);
         return 1;
     }
-
 
     public static int reloadShopkeepers(ServerCommandSource source) {
         ServerWorld world = source.getWorld();
@@ -141,7 +140,10 @@ public class ShopCommand {
 
             // Check if Villager exists
             boolean exists = world.getEntitiesByClass(net.minecraft.entity.passive.VillagerEntity.class, 
-                new net.minecraft.util.math.Box(origin.add(-1, -1, -1), origin.add(1, 3, 1)),
+                new net.minecraft.util.math.Box(
+                    origin.add(-1, -1, -1).getX(), origin.add(-1, -1, -1).getY(), origin.add(-1, -1, -1).getZ(),
+                    origin.add(1, 3, 1).getX(), origin.add(1, 3, 1).getY(), origin.add(1, 3, 1).getZ()
+                ),
                 v -> v.getUuid().equals(shop.villagerUuid)).size() > 0;
 
             if (!exists) {
@@ -157,7 +159,7 @@ public class ShopCommand {
                     // Add trades
                     for (TradeDefinition trade : ShopTypeManager.getTrades(shop.shopType)) {
                         villager.getOffers().add(new net.minecraft.village.TradeOffer(
-                            new net.minecraft.item.ItemStack(net.minecraft.util.registry.Registry.ITEM.get(new net.minecraft.util.Identifier(trade.costItem)), trade.costCount),
+                            new net.minecraft.item.TradedItem(net.minecraft.util.registry.Registry.ITEM.get(new net.minecraft.util.Identifier(trade.costItem)), trade.costCount),
                             new net.minecraft.item.ItemStack(net.minecraft.util.registry.Registry.ITEM.get(new net.minecraft.util.Identifier(trade.resultItem)), trade.resultCount),
                             trade.maxUses, 5, 0.05f
                         ));
