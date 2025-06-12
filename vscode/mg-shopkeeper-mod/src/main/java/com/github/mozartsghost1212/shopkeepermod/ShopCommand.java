@@ -35,9 +35,9 @@ public class ShopCommand {
                 .then(CommandManager.literal("list")
                         .executes(ctx -> listShopkeepers(ctx.getSource())))
                 .then(CommandManager.literal("remove")
-                        .then(CommandManager.argument("uuid", UuidArgumentType.uuid())
+                        .then(CommandManager.argument("shopId", StringArgumentType.word())
                                 .executes(ctx -> removeShopkeeper(ctx.getSource(),
-                                        UuidArgumentType.getUuid(ctx, "uuid")))))
+                                        StringArgumentType.getString(ctx, "shopId")))))
                 .then(CommandManager.literal("reloadTypes")
                         .executes(ctx -> reloadShopTypes(ctx.getSource())))
                 .then(CommandManager.literal("reload")
@@ -114,9 +114,9 @@ public class ShopCommand {
         return 1;
     }
 
-    public static int removeShopkeeper(ServerCommandSource source, UUID uuid) {
-        ShopkeeperManager.removeShopById(uuid.toString());
-        Supplier<Text> feedback = () -> Text.of("Removed shopkeeper with UUID: " + uuid);
+    public static int removeShopkeeper(ServerCommandSource source, String shopId) {
+        ShopkeeperManager.removeShopById(shopId);
+        Supplier<Text> feedback = () -> Text.of("Removed shopkeeper with shopId: " + shopId);
         source.sendFeedback(feedback, false);
         return 1;
     }
