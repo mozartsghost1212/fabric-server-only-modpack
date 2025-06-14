@@ -1,6 +1,8 @@
 package com.github.mozartsghost1212.shopkeepermod;
 
 import com.google.gson.*;
+import com.jcraft.jorbis.Block;
+
 import net.minecraft.util.math.BlockPos;
 
 import java.io.IOException;
@@ -15,10 +17,10 @@ public class ShopkeeperManager {
         saveShops();
     }
 
-    public static void removeShopById(String shopId) {
-        shops.removeIf(shop -> shop.shopId.equals(shopId));
-        saveShops();
-    }
+    // public static void removeShopById(String shopId) {
+    //     shops.removeIf(shop -> shop.shopId.equals(shopId));
+    //     saveShops();
+    // }
 
     public static List<Shop> getShops() {
         return shops;
@@ -34,16 +36,27 @@ public class ShopkeeperManager {
             JsonArray array = JsonParser.parseString(json).getAsJsonArray();
             for (JsonElement elem : array) {
                 JsonObject obj = elem.getAsJsonObject();
-                UUID uuid = UUID.fromString(obj.get("uuid").getAsString());
-                BlockPos pos = new BlockPos(
-                        obj.get("x").getAsInt(),
-                        obj.get("y").getAsInt(),
-                        obj.get("z").getAsInt());
+                UUID entityUuid = UUID.fromString(obj.get("entityUuid").getAsString());
+                BlockPos originBlock = new BlockPos(
+                        obj.get("originBlock").getAsJsonObject().get("x").getAsInt(),
+                        obj.get("originBlock").getAsJsonObject().get("y").getAsInt(),
+                        obj.get("originBlock").getAsJsonObject().get("z").getAsInt());
+                List<BlockPos> allBlocks = new ArrayList<>();
+                JsonArray allBlocksArray = obj.get("allBlocks").getAsJsonArray();
+                for (JsonElement blockElem : allBlocksArray) {
+                    JsonObject blockObj = blockElem.getAsJsonObject();
+                    BlockPos blockPos = new BlockPos(
+                            blockObj.get("x").getAsInt(),
+                            blockObj.get("y").getAsInt(),
+                            blockObj.get("z").getAsInt());
+                    allBlocks.add(blockPos);
+                }                        
                 String type = obj.get("type").getAsString();
-                String shopId = obj.has("shopId") ? obj.get("shopId").getAsString() : "legacy_" + uuid;
-                String owner = obj.has("owner") ? obj.get("owner").getAsString() : "unknown";
-                int size = obj.has("size") ? obj.get("size").getAsInt() : 2;
-                shops.add(new Shop(uuid, pos, type, shopId, owner, size));
+                String shopId = obj.has("shopId") ? obj.get("shopId").getAsString() : "";
+                String owner = obj.has("owner") ? obj.get("owner").getAsString() : "";
+                int size = obj.has("size") ? obj.get("size").getAsInt() : 0;
+                Shop shop = new Shop(entityUuid, originBlock, allBlocks, type, shopId, owner, size);
+                shops.add(shop);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,14 +67,25 @@ public class ShopkeeperManager {
         JsonArray array = new JsonArray();
         for (Shop shop : shops) {
             JsonObject obj = new JsonObject();
-            obj.addProperty("uuid", shop.villagerUuid.toString());
-            obj.addProperty("x", shop.pos.getX());
-            obj.addProperty("y", shop.pos.getY());
-            obj.addProperty("z", shop.pos.getZ());
-            obj.addProperty("type", shop.shopType);
-            obj.addProperty("shopId", shop.shopId);
-            obj.addProperty("owner", shop.owner);
-            obj.addProperty("size", shop.size);
+            obj.addProperty("entityUuid", shop.getEntityUuid().toString());
+            JsonObject originBlock = new JsonObject();
+            originBlock.addProperty("x", shop.getOriginBlock().getX());
+            originBlock.addProperty("y", shop.getOriginBlock().getY());
+            originBlock.addProperty("z", shop.getOriginBlock().getZ());
+            obj.add("originBlock", originBlock);
+            obj.addProperty("type", shop.getShopType());
+            obj.addProperty("shopId", shop.getShopUuid());
+            obj.addProperty("owner", shop.getOwner());
+            obj.addProperty("size", shop.getSize());
+            JsonArray allBlocks = new JsonArray();
+            for (BlockPos block : shop.getAllBlocks()) {
+                JsonObject blockObj = new JsonObject();
+                blockObj.addProperty("x", block.getX());
+                blockObj.addProperty("y", block.getY());
+                blockObj.addProperty("z", block.getZ());
+                allBlocks.add(blockObj);
+            }
+            obj.add("allBlocks", allBlocks);
             array.add(obj);
         }
         try {

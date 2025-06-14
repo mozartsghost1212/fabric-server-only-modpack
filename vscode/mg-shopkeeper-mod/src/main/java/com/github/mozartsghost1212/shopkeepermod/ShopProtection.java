@@ -29,15 +29,15 @@ public class ShopProtection {
     }
 
     private static boolean isProtected(BlockPos pos) {
-        for (Shop shop : ShopkeeperManager.getShops()) {
-            BlockPos center = shop.pos;
-            int size = shop.size;
-            if (pos.getX() >= center.getX() - size && pos.getX() <= center.getX() + size &&
-                    pos.getY() >= center.getY() - 1 && pos.getY() <= center.getY() + 4 &&
-                    pos.getZ() >= center.getZ() - 2 && pos.getZ() <= center.getZ() + 2) {
-                return true;
-            }
-        }
+        // for (Shop shop : ShopkeeperManager.getShops()) {
+        //     BlockPos center = shop.pos;
+        //     int size = shop.size;
+        //     if (pos.getX() >= center.getX() - size && pos.getX() <= center.getX() + size &&
+        //             pos.getY() >= center.getY() - 1 && pos.getY() <= center.getY() + 4 &&
+        //             pos.getZ() >= center.getZ() - 2 && pos.getZ() <= center.getZ() + 2) {
+        //         return true;
+        //     }
+        // }
         return false;
     }
 }
