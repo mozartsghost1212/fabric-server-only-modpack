@@ -6,12 +6,32 @@ import java.nio.file.*;
 import java.util.*;
 
 public class ShopTypeManager {
+
+    private static final Map<String, ShopTypeConfig> shopTypes = new HashMap<>();
+
     public static class ShopTypeConfig {
         public int size = 2;
         public List<TradeDefinition> trades = new ArrayList<>();
     }
 
-    private static final Map<String, ShopTypeConfig> shopTypes = new HashMap<>();
+    public static class TradeDefinition {
+        public String costItem;
+        public int costCount;
+        public String resultItem;
+        public int resultCount;
+        public int maxUses;
+
+        @Override
+        public String toString() {
+            return "TradeDefinition {" +
+                    "costItem='" + costItem + '\'' +
+                    ", costCount=" + costCount +
+                    ", resultItem='" + resultItem + '\'' +
+                    ", resultCount=" + resultCount +
+                    ", maxUses=" + maxUses +
+                    '}';
+        }
+    }
 
     public static void loadShopTypes() {
         shopTypes.clear();
@@ -51,5 +71,9 @@ public class ShopTypeManager {
 
     public static int getShopSize(String shopType) {
         return shopTypes.containsKey(shopType) ? shopTypes.get(shopType).size : 2;
+    }
+
+    public static Set<String> getShopTypes() {
+        return shopTypes.keySet();
     }
 }

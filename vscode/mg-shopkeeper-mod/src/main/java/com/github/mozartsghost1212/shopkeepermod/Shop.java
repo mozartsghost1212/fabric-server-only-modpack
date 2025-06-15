@@ -2,8 +2,9 @@ package com.github.mozartsghost1212.shopkeepermod;
 
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -18,27 +19,45 @@ import java.util.UUID;
  */
 public class Shop {
     private UUID entityUuid;
-    private BlockPos originBlock;
-    private String shopType;
-    private UUID shopUuid;
+    private UUID uuid;
+    private BlockPos origin;
+    private String type;
     private String owner;
     private int size;
+    private Set<BlockPos> blocks = new HashSet<>();
 
-    private final List<BlockPos> allBlocks = new ArrayList<>();
-
-    public Shop(UUID shopUuid, BlockPos originPos, String type, String owner, int size) {
-        this.originBlock = originPos;
-        this.shopType = type;
+    /**
+     * @param uuid   the unique identifier for the shop
+     * @param origin the position of the origin block of the shop
+     * @param type   the type of the shop
+     * @param owner  the owner of the shop
+     * @param size   the size of the shop
+     */
+    public Shop(UUID uuid, BlockPos origin, String type, String owner, int size) {
+        this.origin = origin;
+        this.type = type;
         this.owner = owner;
         this.size = size;
-        this.allBlocks.add(originPos);
+        this.blocks.add(origin);
     }
 
-    public Shop(UUID entityUuid, UUID shopUuid, BlockPos originBlock, List<BlockPos> allBlocks, String shopType, String owner, int size) {
-        this(shopUuid, originBlock, shopType, owner, size);
+    /**
+     * Constructs a new Shop instance with the specified parameters.
+     *
+     * @param entityUuid  the UUID of the associated entity (e.g., shopkeeper NPC)
+     * @param shopUuid    the unique identifier for this shop
+     * @param originBlock the origin block position of the shop
+     * @param shopType    the type or category of the shop
+     * @param shopOwner   the owner of the shop
+     * @param shopSize    the size of the shop (e.g., inventory slots)
+     * @param shopBlocks  a list of all block positions associated with the shop
+     */
+    public Shop(UUID entityUuid, UUID shopUuid, BlockPos originBlock, String shopType, String shopOwner, int shopSize,
+            List<BlockPos> shopBlocks) {
+        this(shopUuid, originBlock, shopType, shopOwner, shopSize);
         this.entityUuid = entityUuid;
-        this.shopUuid = shopUuid;
-        this.allBlocks.addAll(allBlocks);
+        this.uuid = shopUuid;
+        this.blocks.addAll(shopBlocks);
     }
 
     /**
@@ -64,17 +83,18 @@ public class Shop {
      *
      * @return the {@link BlockPos} representing the first block's position
      */
-    public BlockPos getOriginBlock() {
-        return originBlock;
+    public BlockPos getOrigin() {
+        return origin;
     }
 
     /**
      * Sets the position of the first block associated with the shop.
      *
-     * @param firstBlock the {@link BlockPos} representing the new position of the first block
+     * @param firstBlock the {@link BlockPos} representing the new position of the
+     *                   first block
      */
-    public void setOriginBlock(BlockPos firstBlock) {
-        this.originBlock = firstBlock;
+    public void setOrigin(BlockPos firstBlock) {
+        this.origin = firstBlock;
     }
 
     /**
@@ -82,8 +102,8 @@ public class Shop {
      *
      * @return the shop type as a String
      */
-    public String getShopType() {
-        return shopType;
+    public String getType() {
+        return type;
     }
 
     /**
@@ -91,8 +111,8 @@ public class Shop {
      *
      * @param shopType the type of the shop to set
      */
-    public void setShopType(String shopType) {
-        this.shopType = shopType;
+    public void setType(String shopType) {
+        this.type = shopType;
     }
 
     /**
@@ -100,8 +120,8 @@ public class Shop {
      *
      * @return the shop's unique ID as a String
      */
-    public UUID getShopUuid() {
-        return shopUuid;
+    public UUID getUuid() {
+        return uuid;
     }
 
     /**
@@ -109,8 +129,8 @@ public class Shop {
      *
      * @param shopId the unique identifier to assign to the shop
      */
-    public void setShopUuid(UUID shopUuid) {
-        this.shopUuid = shopUuid;
+    public void setUuid(UUID shopUuid) {
+        this.uuid = shopUuid;
     }
 
     /**
@@ -155,7 +175,7 @@ public class Shop {
      * @return a {@link List} of {@link BlockPos} representing all blocks linked to
      *         the shop
      */
-    public List<BlockPos> getAllBlocks() {
-        return allBlocks;
+    public Set<BlockPos> getBlocks() {
+        return blocks;
     }
 }

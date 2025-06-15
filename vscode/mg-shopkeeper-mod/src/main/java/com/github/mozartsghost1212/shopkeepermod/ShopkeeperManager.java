@@ -69,16 +69,16 @@ public class ShopkeeperManager {
             JsonObject obj = new JsonObject();
             obj.addProperty("entityUuid", shop.getEntityUuid().toString());
             JsonObject originBlock = new JsonObject();
-            originBlock.addProperty("x", shop.getOriginBlock().getX());
-            originBlock.addProperty("y", shop.getOriginBlock().getY());
-            originBlock.addProperty("z", shop.getOriginBlock().getZ());
+            originBlock.addProperty("x", shop.getOrigin().getX());
+            originBlock.addProperty("y", shop.getOrigin().getY());
+            originBlock.addProperty("z", shop.getOrigin().getZ());
             obj.add("originBlock", originBlock);
-            obj.addProperty("type", shop.getShopType());
-            obj.addProperty("shopId", shop.getShopUuid());
+            obj.addProperty("type", shop.getType());
+            obj.addProperty("shopId", shop.getUuid());
             obj.addProperty("owner", shop.getOwner());
             obj.addProperty("size", shop.getSize());
             JsonArray allBlocks = new JsonArray();
-            for (BlockPos block : shop.getAllBlocks()) {
+            for (BlockPos block : shop.getBlocks()) {
                 JsonObject blockObj = new JsonObject();
                 blockObj.addProperty("x", block.getX());
                 blockObj.addProperty("y", block.getY());
