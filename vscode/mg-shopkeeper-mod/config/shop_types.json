@@ -1,34 +1,21 @@
-{
-  "blacksmith": {
-    "size": 3,
+[  
+  {
+    "type": "general_store",
+    "name": "General Store",
+    "description": "A store that sells a variety of everyday items.",
+    "size": 4,
     "trades": [
       {
         "cost": {
           "item": "minecraft:emerald",
-          "count": 5
+          "count": 3
         },
         "result": {
-          "item": "minecraft:diamond_sword",
-          "count": 1
+          "item": "minecraft:torch",
+          "count": 16
         },
-        "max_uses": 10
-      }
-    ]
-  },
-  "foodstall": {
-    "size": 2,
-    "trades": [
-      {
-        "cost": {
-          "item": "minecraft:emerald",
-          "count": 1
-        },
-        "result": {
-          "item": "minecraft:bread",
-          "count": 5
-        },
-        "max_uses": 20
+        "max_uses": 15
       }
     ]
   }
-}
+]

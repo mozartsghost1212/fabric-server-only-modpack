@@ -9,7 +9,7 @@ public class ShopkeeperMod implements ModInitializer {
     public void onInitialize() {
         ShopkeeperManager.loadShops();
         ShopTypeManager.loadShopTypes();
-        ShopProtection.registerProtection();
+        ShopProtection.register();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             ShopCommand.register(dispatcher);

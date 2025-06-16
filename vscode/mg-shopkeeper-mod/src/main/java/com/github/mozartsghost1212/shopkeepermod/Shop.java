@@ -8,56 +8,79 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Represents a shop in the game world.
+ * Represents a shop in the game world, defined by its unique identifiers,
+ * location,
+ * type, name, description, owner, size, and the set of block positions it
+ * occupies.
  * <p>
- * Each shop is associated with a unique entity, a primary block position, a
- * type,
- * an identifier, an owner, and a size. The shop also maintains a list of all
- * block
- * positions that are part of the shop.
+ * The {@code Shop} class provides constructors for creating shop instances with
+ * varying levels of detail, as well as getter and setter methods for accessing
+ * and
+ * modifying shop properties.
+ * </p>
+ * <ul>
+ * <li>{@code entityUuid}: The UUID of the entity associated with the shop
+ * (optional).</li>
+ * <li>{@code shopUuid}: The unique identifier for the shop.</li>
+ * <li>{@code origin}: The origin block position of the shop.</li>
+ * <li>{@code type}: The type/category of the shop.</li>
+ * <li>{@code name}: The name of the shop.</li>
+ * <li>{@code description}: A description of the shop.</li>
+ * <li>{@code owner}: The owner of the shop.</li>
+ * <li>{@code size}: The size of the shop (typically as a square, size x
+ * size).</li>
+ * <li>{@code blocks}: The set of block positions that make up the shop.</li>
+ * </ul>
+ * 
+ * <p>
+ * Example usage:
+ * 
+ * <pre>
+ * Shop shop = new Shop(shopUuid, origin, "general", "My Shop", "A nice shop", "player123", 5);
+ * </pre>
  * </p>
  */
 public class Shop {
     private UUID entityUuid;
-    private UUID uuid;
+    private UUID shopUuid;
     private BlockPos origin;
     private String type;
     private String owner;
-    private int size;
     private Set<BlockPos> blocks = new HashSet<>();
+    
+    private ShopTypeDefinition typeDefinition;
 
     /**
-     * @param uuid   the unique identifier for the shop
-     * @param origin the position of the origin block of the shop
-     * @param type   the type of the shop
-     * @param owner  the owner of the shop
-     * @param size   the size of the shop
+     * Constructs a new Shop instance with the specified parameters.
+     *
+     * @param shopUuid the unique identifier for the shop
+     * @param origin   the origin block position of the shop
+     * @param type     the type of the shop
+     * @param owner    the owner of the shop
      */
-    public Shop(UUID uuid, BlockPos origin, String type, String owner, int size) {
+    public Shop(UUID shopUuid, BlockPos origin, String type, String owner) {
+        this.shopUuid = shopUuid;
         this.origin = origin;
         this.type = type;
+        this.typeDefinition = ShopTypeManager.getShopType(type);
         this.owner = owner;
-        this.size = size;
         this.blocks.add(origin);
     }
 
     /**
      * Constructs a new Shop instance with the specified parameters.
      *
-     * @param entityUuid  the UUID of the associated entity (e.g., shopkeeper NPC)
-     * @param shopUuid    the unique identifier for this shop
-     * @param originBlock the origin block position of the shop
-     * @param shopType    the type or category of the shop
-     * @param shopOwner   the owner of the shop
-     * @param shopSize    the size of the shop (e.g., inventory slots)
-     * @param shopBlocks  a list of all block positions associated with the shop
+     * @param entityUuid the UUID of the entity associated with the shop
+     * @param shopUuid   the unique identifier for the shop
+     * @param origin     the origin block position of the shop
+     * @param type       the type of the shop
+     * @param owner      the owner of the shop
+     * @param blocks     a list of block positions that make up the shop
      */
-    public Shop(UUID entityUuid, UUID shopUuid, BlockPos originBlock, String shopType, String shopOwner, int shopSize,
-            List<BlockPos> shopBlocks) {
-        this(shopUuid, originBlock, shopType, shopOwner, shopSize);
+    public Shop(UUID entityUuid, UUID shopUuid, BlockPos origin, String type, String owner, List<BlockPos> blocks) {
+        this(shopUuid, origin, type, owner);
         this.entityUuid = entityUuid;
-        this.uuid = shopUuid;
-        this.blocks.addAll(shopBlocks);
+        this.blocks.addAll(blocks);
     }
 
     /**
@@ -120,8 +143,8 @@ public class Shop {
      *
      * @return the shop's unique ID as a String
      */
-    public UUID getUuid() {
-        return uuid;
+    public UUID getShopUuid() {
+        return shopUuid;
     }
 
     /**
@@ -129,8 +152,8 @@ public class Shop {
      *
      * @param shopId the unique identifier to assign to the shop
      */
-    public void setUuid(UUID shopUuid) {
-        this.uuid = shopUuid;
+    public void setShopUuid(UUID shopUuid) {
+        this.shopUuid = shopUuid;
     }
 
     /**
@@ -157,16 +180,7 @@ public class Shop {
      * @return the size of the shop as an integer
      */
     public int getSize() {
-        return size;
-    }
-
-    /**
-     * Sets the size of the shop (size x size).
-     *
-     * @param size the new size to set
-     */
-    public void setSize(int size) {
-        this.size = size;
+        return typeDefinition != null ? typeDefinition.getSize() : ShopTypeDefinition.DEFAULT_SHOP_SIZE;
     }
 
     /**
@@ -177,5 +191,23 @@ public class Shop {
      */
     public Set<BlockPos> getBlocks() {
         return blocks;
+    }
+
+    /**
+     * Returns the name of the shop.
+     *
+     * @return the shop's name
+     */
+    public String getName() {
+        return typeDefinition != null ? typeDefinition.getName() : "";
+    }
+
+    /**
+     * Returns the description of the shop.
+     *
+     * @return the shop's description
+     */
+    public String getDescription() {
+        return typeDefinition != null ? typeDefinition.getDescription() : "";    
     }
 }
