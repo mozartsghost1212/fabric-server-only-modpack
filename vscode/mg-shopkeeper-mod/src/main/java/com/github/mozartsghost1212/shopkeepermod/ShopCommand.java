@@ -65,13 +65,19 @@ public class ShopCommand {
         ServerPlayerEntity player = source.getPlayer();
         
         BlockPos origin = player.getBlockPos().add(4, 0, 4);
-        int shopSize = ShopTypeManager.getShopSize(type);
+        if (ShopkeeperManager.getAllShopBlocks().contains(origin)) {
+            Supplier<Text> feedback = () -> Text.of("A shop already exists at this location.");
+            source.sendFeedback(feedback, false);
+            return 0;
+        }
+
         UUID shopUuid = UUID.randomUUID();
         String owner = source.getPlayer().getGameProfile().getName();
-        Shop shop = new Shop(shopUuid, origin, type, null, null, owner, shopSize);
+        Shop shop = new Shop(shopUuid, origin, type, owner);
+        int size = shop.getSize();
         
-        for (int x = -shopSize; x <= shopSize; x++) {
-            for (int z = -shopSize; z <= shopSize; z++) {
+        for (int x = -size; x <= size; x++) {
+            for (int z = -size; z <= size; z++) {
                 // Set floor block
                 BlockPos floorBlock = origin.add(x, -1, z);
                 world.setBlockState(floorBlock, Blocks.STONE.getDefaultState());
@@ -79,7 +85,7 @@ public class ShopCommand {
                 
                 // Set wall blocks 3 high
                 for (int y = 0; y <= 3; y++) {
-                    if (x == -shopSize || x == shopSize || z == -shopSize || z == shopSize) {
+                    if (x == -size || x == size || z == -size || z == size) {
                         BlockPos wallBlock = origin.add(x, y, z);
                         world.setBlockState(wallBlock, Blocks.OAK_PLANKS.getDefaultState());
                         shop.getBlocks().add(wallBlock);
@@ -112,7 +118,7 @@ public class ShopCommand {
             villager.setAiDisabled(true);
             villager.setInvulnerable(true);
             villager.setPersistent();
-            villager.setCustomName(Text.of(type + " Shopkeeper"));
+            villager.setCustomName(Text.of(shop.getName() + " Shopkeeper"));
             villager.setCustomNameVisible(true);
 
             // Add trades
@@ -144,16 +150,21 @@ public class ShopCommand {
             return 1;
         }
         for (Shop shop : shops) {
-            Supplier<Text> feedback = () -> Text
-                    .of("Shop UUID: " + shop.getShopUuid() + " | Entity UUID: " + shop.getEntityUuid()
-                            + " | Owner: " + shop.getOwner() + " | Size: " + shop.getSize()
-                            + " at " + shop.getOrigin() + " type: " + shop.getType());
+            // Display shop details
+            Supplier<Text> feedback = () -> Text.of("Shopkeeper: " + shop.getName() + 
+                " | Entity UUID: " + shop.getEntityUuid() +
+                " | Shop UUID: " + shop.getShopUuid() +
+                " | Type: " + shop.getType() +
+                " | origin: " + shop.getOrigin() +
+                " | Size: " + shop.getSize() +
+                " | Owner: " + shop.getOwner());
             source.sendFeedback(feedback, false);
         }
         return 1;
     }
+
     public static int removeShopkeeper(ServerCommandSource source, UUID uuid) {
-                
+        // delete shop and remove blocks         
 
         Supplier<Text> feedback = () -> Text.of("Removed shopkeeper with UUID: " + uuid);
         source.sendFeedback(feedback, false);

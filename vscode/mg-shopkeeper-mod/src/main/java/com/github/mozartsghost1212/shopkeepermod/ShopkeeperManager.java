@@ -6,10 +6,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -20,8 +22,10 @@ import net.minecraft.util.math.BlockPos;
 
 public class ShopkeeperManager {
     
-    private static final List<Shop> allShops = new ArrayList<>();
-    private static final Set<BlockPos> allShopBlocks = new HashSet<>();
+    private static final List<Shop> allShops = new CopyOnWriteArrayList<>();
+    private static final Set<BlockPos> allShopBlocks = ConcurrentHashMap.newKeySet();
+    private static final Map<UUID, Shop> entityUuidToShop = new ConcurrentHashMap<>();
+    private static final Map<UUID, Shop> shopUuidToShop = new ConcurrentHashMap<>();
     
     /**
      * Initializes the shopkeeper system by loading all shop data from the "config/shopkeepers.json" file.
@@ -36,6 +40,9 @@ public class ShopkeeperManager {
      */
     public static void loadShops() {
         allShops.clear();
+        allShopBlocks.clear();
+        entityUuidToShop.clear();
+        shopUuidToShop.clear();
         try {
             Path path = Paths.get("config/shopkeepers.json");
             if (!Files.exists(path))
@@ -48,7 +55,6 @@ public class ShopkeeperManager {
                 UUID shopUuid = UUID.fromString(obj.get("shopUuid").getAsString());
                 String type = obj.get("type").getAsString();
                 String owner = obj.get("owner").getAsString();
-                int size = obj.has("size") ? obj.get("size").getAsInt() : 0;
                 BlockPos origin = new BlockPos(
                         obj.get("origin").getAsJsonObject().get("x").getAsInt(),
                         obj.get("origin").getAsJsonObject().get("y").getAsInt(),
@@ -63,7 +69,7 @@ public class ShopkeeperManager {
                             blockObj.get("z").getAsInt());
                     blocks.add(blockPos);
                 }                        
-                Shop shop = new Shop(entityUuid, shopUuid, origin, type, owner, size, blocks);
+                Shop shop = new Shop(entityUuid, shopUuid, origin, type, owner, blocks);
                 allShops.add(shop);
             }
         } catch (IOException e) {
@@ -91,7 +97,6 @@ public class ShopkeeperManager {
             obj.addProperty("shopUuid", shop.getShopUuid().toString());            
             obj.addProperty("type", shop.getType());
             obj.addProperty("owner", shop.getOwner());
-            obj.addProperty("size", shop.getSize());
             JsonObject origin = new JsonObject();
             origin.addProperty("x", shop.getOrigin().getX());
             origin.addProperty("y", shop.getOrigin().getY());
@@ -125,9 +130,13 @@ public class ShopkeeperManager {
      * @param shop the {@link Shop} instance to add
      */
     public static void addShop(Shop shop) {
-        allShopBlocks.addAll(shop.getBlocks());
-        allShops.add(shop);        
-        saveShops();
+        synchronized (allShopBlocks) {
+            allShopBlocks.addAll(shop.getBlocks());
+            allShops.add(shop);
+            entityUuidToShop.put(shop.getEntityUuid(), shop);
+            shopUuidToShop.put(shop.getShopUuid(), shop);
+            saveShops();
+        }  
     }
 
     /**
@@ -139,9 +148,13 @@ public class ShopkeeperManager {
      * @param shop the {@link Shop} instance to be removed
      */
     public static void removeShop(Shop shop) {
-        allShopBlocks.removeAll(shop.getBlocks());
-        allShops.remove(shop);        
-        saveShops();
+        synchronized (allShopBlocks) {
+            allShopBlocks.removeAll(shop.getBlocks());
+            allShops.remove(shop);
+            entityUuidToShop.remove(shop.getEntityUuid());
+            shopUuidToShop.remove(shop.getShopUuid());  
+            saveShops();
+        } 
     }
 
     /**
@@ -161,4 +174,18 @@ public class ShopkeeperManager {
     public static Set<BlockPos> getAllShopBlocks() {
         return allShopBlocks;
     }    
+    
+    /**
+     * Retrieves the {@link Shop} associated with the given entity UUID.
+     *
+     * @param entityUuid the UUID of the entity
+     * @return the {@link Shop} associated with the entity UUID, or {@code null} if no shop is found
+     */    
+    public static Shop getShopByEntityUuid(UUID entityUuid) {
+        return entityUuidToShop.get(entityUuid);    
+    }
+
+    public static Shop getShopByShopUuid(UUID shopUuid) {
+        return shopUuidToShop.get(shopUuid);
+    }
 }
