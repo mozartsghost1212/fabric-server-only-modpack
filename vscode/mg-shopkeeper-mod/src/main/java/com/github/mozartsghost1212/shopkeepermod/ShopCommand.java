@@ -155,7 +155,7 @@ public class ShopCommand {
                 " | Entity UUID: " + shop.getEntityUuid() +
                 " | Shop UUID: " + shop.getShopUuid() +
                 " | Type: " + shop.getType() +
-                " | origin: " + shop.getOrigin() +
+                " | Origin: " + shop.getOrigin() +
                 " | Size: " + shop.getSize() +
                 " | Owner: " + shop.getOwner());
             source.sendFeedback(feedback, false);
@@ -164,8 +164,28 @@ public class ShopCommand {
     }
 
     public static int removeShopkeeper(ServerCommandSource source, UUID uuid) {
-        // delete shop and remove blocks         
-
+        // Check if the shop with the given UUID exists
+        Shop shop = ShopkeeperManager.getShopByShopUuid(uuid);
+        if (shop == null) {
+            Supplier<Text> feedback = () -> Text.of("No shopkeeper found with UUID: " + uuid);
+            source.sendFeedback(feedback, false);
+            return 0;
+        }
+        // Remove all blocks associated with the shop
+        ServerWorld world = source.getWorld();
+        for (BlockPos block : shop.getBlocks()) {
+            world.setBlockState(block, Blocks.AIR.getDefaultState());
+        }
+        // Remove the villager entity if it exists
+        if (shop.getEntityUuid() != null) {
+            net.minecraft.entity.Entity villagerEntity = world.getEntity(shop.getEntityUuid());
+            if (villagerEntity != null) {
+                villagerEntity.remove(net.minecraft.entity.Entity.RemovalReason.DISCARDED);
+            }
+        }
+        // Remove the shop from the manager
+        ShopkeeperManager.removeShop(shop);
+        // Send feedback to the command source
         Supplier<Text> feedback = () -> Text.of("Removed shopkeeper with UUID: " + uuid);
         source.sendFeedback(feedback, false);
         return 1;
