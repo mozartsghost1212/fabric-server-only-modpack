@@ -85,8 +85,13 @@ public class ShopTypeManager {
                 return;
             }
             // Read the JSON file and parse it into a JsonObject
+            System.out.println("Loading shop types from: " + path.toAbsolutePath());
             String json = Files.readString(path);
             JsonArray shopArray = JsonParser.parseString(json).getAsJsonArray();
+            if (shopArray == null || shopArray.size() == 0) {
+                System.out.println("No shop types found in JSON, skipping load.");
+                return;
+            }
             for (JsonElement shopTypeElem : shopArray) {
                 JsonObject shopObj = shopTypeElem.getAsJsonObject();
                 ShopTypeDefinition config = new ShopTypeDefinition();
@@ -115,6 +120,8 @@ public class ShopTypeManager {
                     trade.setMaxUses(tradeObj.get("max_uses").getAsInt());
                     config.getTrades().add(trade);
                 }
+                // Add the shop type definition to the map
+                shopTypes.put(config.getType(), config);
             }
         } catch (IOException e) {
             e.printStackTrace();
